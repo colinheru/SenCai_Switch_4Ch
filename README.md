@@ -5,10 +5,15 @@ It implements most of System-B specification and can be configured with ETS.
 
 优点：
 1.ETS编程配置；
+
 2.KNX_TP方式组网；
+
 3.不受KNX_TP芯片库存限制；
+
 4.成本低，无需KNX_TP IC依赖和KNX总线安装；
+
 5.安装方便，无需KNX系统电源和KNX总线；
+
 6. 与现有的KNX系统兼容（且易于升级/扩展）；
 
 
