@@ -1,7 +1,5 @@
 # KNX Iot 
 
-This projects provides a knx-device stack for arduino (ESP8266, ESP32, SAMD21, RP2040, STM32), CC1310 and linux. (more are quite easy to add)
-It implements most of System-B specification and can be configured with ETS.
 
 优点：
 
