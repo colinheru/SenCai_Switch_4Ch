@@ -4,6 +4,7 @@ This projects provides a knx-device stack for arduino (ESP8266, ESP32, SAMD21, R
 It implements most of System-B specification and can be configured with ETS.
 
 优点：
+
 1、ETS编程配置；
 
 2、KNX_TP方式组网；
