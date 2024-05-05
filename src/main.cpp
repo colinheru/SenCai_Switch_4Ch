@@ -1,12 +1,7 @@
 #include <knx.h>
 #include <knx/bau57B0.h>
-
 #include <WiFiManager.h>
-
-
-
 #define DEV_NAME "SenCai_Switch_4Ch"
-
 // KNX Prog Hardware Define on the NodeMCU platform
 #define PROG_BUTTON_PIN         0  //GPIO 0 --> Flash Button
 #define PROG_LED_PIN            2  //GPIO 2 --> Built-in Led
