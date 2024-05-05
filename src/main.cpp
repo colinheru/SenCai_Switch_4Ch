@@ -7,73 +7,25 @@
 #define PROG_LED_PIN            2  //GPIO 2 --> Built-in Led
 #define PROG_LED_PIN_ACTIVE_ON  HIGH
 
-// Relay Channel Pin Define
-#ifdef ESP8285
-// #define MAN_BUTTON_A_PIN         0  //GPIO 0 --> same as Flash Button, actually not used
-#define MAN_BUTTON_B_PIN         9  //GPIO 9 --> Button B
-#define MAN_BUTTON_C_PIN         14 //GPIO 14 --> Button D
-#define MAN_BUTTON_D_PIN         10 //GPIO 10 --> Button C
-
-bool isManual = false;
-
-uint8_t relayChDef[] = {12,  //GPIO 12 --> CH A
-                        5,   //GPIO 5 --> CH B
-                        15,  //GPIO 15 --> CH C
-                        4};  //GPIO 4 --> CH D
-#else
-uint8_t relayChDef[] = {12,  //GPIO 12 --> CH A
-                        13,  //GPIO 13 --> CH B
-                        14,  //GPIO 14 --> CH C
-                        15}; //GPIO 15 --> CH D
-#endif
 uint8_t relayChCount = sizeof(relayChDef)/sizeof(relayChDef[0]);
-
-// Relay Channel Index Name
-enum {
-  CH_A = 0,
-  CH_B,
-  CH_C,
-  CH_D
-};
-// Relay Channel
-#define RELAY_CH_A relayChDef[CH_A]
-#define RELAY_CH_B relayChDef[CH_B]
-#define RELAY_CH_C relayChDef[CH_C]
-#define RELAY_CH_D relayChDef[CH_D]
-
-// Relay Channel Initialize
-void relayInit(uint8_t chCount)
-{   
-    if (chCount <= 0 || chCount > relayChCount) return;
-    for (uint8_t ch = 0; ch <= (chCount - 1); ch++)
-    {
-        pinMode(relayChDef[ch], OUTPUT);
-    }
-}
 
 // KNX Parameter List
 
-
 // KNX Comm/Group Object List
 #define Relay_KoOffset 0
-#define Relay_KoBlockSize 3
+#define Relay_KoBlockSize 2
 
 // Create named references for easy access to group objects
 #define groupObjChSwitch(Idx) (knx.getGroupObject(Relay_KoOffset + Relay_KoBlockSize * Idx + 1))
-#define groupObjChBlock(Idx) (knx.getGroupObject(Relay_KoOffset + Relay_KoBlockSize * Idx + 2))
-#define groupObjChStatus(Idx) (knx.getGroupObject(Relay_KoOffset + Relay_KoBlockSize * Idx + 3))
+#define groupObjChStatus(Idx) (knx.getGroupObject(Relay_KoOffset + Relay_KoBlockSize * Idx + 2))
 
 #define groupObjChASwitch groupObjChSwitch(CH_A)
-#define groupObjChABlock groupObjChBlock(CH_A)
 #define groupObjChAStatus groupObjChStatus(CH_A)
 #define groupObjChBSwitch groupObjChSwitch(CH_B)
-#define groupObjChBBlock groupObjChBlock(CH_B)
 #define groupObjChBStatus groupObjChStatus(CH_B)
 #define groupObjChCSwitch groupObjChSwitch(CH_C)
-#define groupObjChCBlock groupObjChBlock(CH_C)
 #define groupObjChCStatus groupObjChStatus(CH_C)
 #define groupObjChDSwitch groupObjChSwitch(CH_D)
-#define groupObjChDBlock groupObjChBlock(CH_D)
 #define groupObjChDStatus groupObjChStatus(CH_D)
 
 // callback from switch-GO
