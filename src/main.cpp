@@ -116,13 +116,6 @@ void setup()
 
     relayInit(relayChCount);
 
-#ifdef ESP8285
-// initialize the pushbutton pin as an input:
-    pinMode(MAN_BUTTON_B_PIN, INPUT);
-    pinMode(MAN_BUTTON_C_PIN, INPUT);
-    pinMode(MAN_BUTTON_D_PIN, INPUT);
-#endif
-
     wifiManager.setHostname(DEV_NAME);
     wifiManager.setClass("invert"); // Dark Mode
     wifiManager.setBreakAfterConfig(false);
@@ -153,23 +146,19 @@ void setup()
       Serial.println("Device is Configured!");
       
       groupObjChASwitch.callback(chASwitchCallback); // register callback for reset GO
-      groupObjChASwitch.dataPointType(Dpt(1, 1));
-      groupObjChABlock.dataPointType(Dpt(1, 3));
-      groupObjChAStatus.dataPointType(Dpt(1, 2));
+      groupObjChASwitch.dataPointType(DPT_Switch);
+      groupObjChAStatus.dataPointType(DPT_Bool);
 
       groupObjChBSwitch.callback(chBSwitchCallback);
-      groupObjChBSwitch.dataPointType(Dpt(1, 1));
-      groupObjChBBlock.dataPointType(Dpt(1, 3));
-      groupObjChBStatus.dataPointType(Dpt(1, 2));
+      groupObjChBSwitch.dataPointType(DPT_Switch);
+      groupObjChBStatus.dataPointType(DPT_Bool);
 
       groupObjChCSwitch.callback(chCSwitchCallback);
       groupObjChCSwitch.dataPointType(DPT_Switch);
-      groupObjChCBlock.dataPointType(DPT_Enable);
       groupObjChCStatus.dataPointType(DPT_Bool);
 
       groupObjChDSwitch.callback(chDSwitchCallback);
       groupObjChDSwitch.dataPointType(DPT_Switch);
-      groupObjChDBlock.dataPointType(DPT_Enable);
       groupObjChDStatus.dataPointType(DPT_Bool);
     } 
     else {
@@ -199,98 +188,14 @@ void setup()
     wifiManager.addParameter(&custom_field);
 }
 
-const int SHORT_PRESS_TIME = 1000; // 1000 ms
-long pressedTime[4] = {0};
-long releasedTime[4] = {0};
-bool lastState[4] = {HIGH, HIGH, HIGH, HIGH};
 void loop() 
 {
     // don't delay here to much. Otherwise you might lose packages or mess up the timing with ETS
     knx.loop();
     wifiManager.process(); 
-
-    //Button Functions
-    if (lastState[CH_A] == HIGH && digitalRead(PROG_BUTTON_PIN) == LOW) {
-        pressedTime[CH_A] = millis();
-        lastState[CH_A] = LOW;
-    }
-    releasedTime[CH_A] = millis();
-    long pressDuration = releasedTime[CH_A] - pressedTime[CH_A];
-    if (lastState[CH_A] == LOW && (digitalRead(PROG_BUTTON_PIN) == HIGH || pressDuration > SHORT_PRESS_TIME)) {
-        lastState[CH_A] = HIGH;
-        if (pressDuration < SHORT_PRESS_TIME) {
-#ifdef ESP8285
-            if (isManual) digitalWrite(RELAY_CH_A, !digitalRead(RELAY_CH_A));
-#endif
-        } 
-        else {
-            knx.toggleProgMode();
-        }
-    }
-
-#ifdef ESP8285
-    // Button B Functions
-    if (lastState[CH_B] == HIGH && digitalRead(MAN_BUTTON_B_PIN) == LOW) {
-        pressedTime[CH_B] = millis();
-        lastState[CH_B] = LOW;
-    }
-    releasedTime[CH_B] = millis();
-    pressDuration = releasedTime[CH_B] - pressedTime[CH_B];
-    if (lastState[CH_B] == LOW && (digitalRead(MAN_BUTTON_B_PIN) == HIGH || pressDuration > SHORT_PRESS_TIME)) {
-        lastState[CH_B] = HIGH;
-        if (pressDuration < SHORT_PRESS_TIME) {
-            if (isManual) digitalWrite(RELAY_CH_B, !digitalRead(RELAY_CH_B));
-        } 
-        else {
-            isManual = !isManual;
-            if (isManual)
-            {
-                knx.enabled(false);
-                digitalWrite(PROG_LED_PIN, LOW);
-                Serial.println("Local direct control is enabled");
-            }
-            else {
-                knx.enabled(true);
-                digitalWrite(PROG_LED_PIN, HIGH);
-                Serial.println("KNX telegram control is enabled");
-            }
-        }
-    }
-
-    // Button C Functions
-    if (lastState[CH_C] == HIGH && digitalRead(MAN_BUTTON_C_PIN) == LOW) {
-        pressedTime[CH_C] = millis();
-        lastState[CH_C] = LOW;
-    }
-    releasedTime[CH_C] = millis();
-    pressDuration = releasedTime[CH_C] - pressedTime[CH_C];
-    if (lastState[CH_C] == LOW && (digitalRead(MAN_BUTTON_C_PIN) == HIGH || pressDuration > SHORT_PRESS_TIME)) {
-        lastState[CH_C] = HIGH;
-        if (pressDuration < SHORT_PRESS_TIME) {
-            if (isManual) digitalWrite(RELAY_CH_C, !digitalRead(RELAY_CH_C));
-        } 
-        else {
-            // do nothing
-        }
-    }
-
-    // Button D Functions
-    if (lastState[CH_D] == HIGH && digitalRead(MAN_BUTTON_D_PIN) == LOW) {
-        pressedTime[CH_D] = millis();
-        lastState[CH_D] = LOW;
-    }
-    releasedTime[CH_D] = millis();
-    pressDuration = releasedTime[CH_D] - pressedTime[CH_D];
-    if (lastState[CH_D] == LOW && (digitalRead(MAN_BUTTON_D_PIN) == HIGH || pressDuration > SHORT_PRESS_TIME)) {
-        lastState[CH_D] = HIGH;
-        if (pressDuration < SHORT_PRESS_TIME) {
-            if (isManual) digitalWrite(RELAY_CH_D, !digitalRead(RELAY_CH_D));
-        } 
-        else {
-            // do nothing
-        }
-    }
-#endif
+    knx.toggleProgMode();
+    // do nothing
+}
 
     // only run the application code if the device was configured with ETS
     if (!knx.configured())  return;
