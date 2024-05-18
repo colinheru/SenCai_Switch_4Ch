@@ -1,5 +1,5 @@
-# KNX Iot 
-
+ knx Iot 
+knx stack (TP, IP and RF) for arduino and linux, Can be configured with ETS. 
 
 优点：
 
